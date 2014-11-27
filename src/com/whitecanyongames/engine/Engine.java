@@ -1,14 +1,11 @@
 //Created by White Canyon Games, 2014
 package com.whitecanyongames.engine;
 
-import static org.lwjgl.opengl.GL11.GL_FLAT;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
-import static org.lwjgl.opengl.GL11.glShadeModel;
+import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
@@ -29,15 +26,19 @@ import org.lwjgl.opengl.PixelFormat;
 
 public abstract class Engine {
 	protected String title;
-	protected int width;
-	protected int height;
+	protected static int width;
+	protected static int height;
 	
 	protected static long lastFrame;
 	protected static int FPS;
 	protected static long lastFPS;
 	
 	protected boolean bDebugMode;
+	protected boolean bDisableFullscreen;
 	protected boolean bDynamicLighting;
+	
+	private static String BUILD_TYPE = "Nightly";
+	private static String BUILD_NUMBER = "0.0.5";
 	
 	/**
 	 * The main engine constructor, all game classes extend Engine and inherit its
@@ -91,13 +92,16 @@ public abstract class Engine {
 	 * @param delta is the time since the last update
 	 */
 	protected void update(int delta)	{
-		while(Keyboard.next())	{
-			if (Keyboard.getEventKeyState())	{
-				if (Keyboard.getEventKey() == Keyboard.KEY_F11)	{
-					setDisplayMode(width, height, !Display.isFullscreen());
+		if (!bDisableFullscreen)	{
+			while(Keyboard.next())	{
+				if (Keyboard.getEventKeyState())	{
+					if (Keyboard.isKeyDown(Keyboard.KEY_F11))	{
+						setDisplayMode(width, height, !Display.isFullscreen());
+					}
 				}
 			}
 		}
+		
 		updateFPS();
 	}
 	/**
@@ -161,7 +165,7 @@ public abstract class Engine {
 	 * @param height is the height of the screen when not in fullscreen mode
 	 * @param fullscreen boolean that determines fullscreen mode is implemented
 	 */
-	protected void setDisplayMode(int width, int height, boolean fullscreen)	{
+	public static void setDisplayMode(int width, int height, boolean fullscreen)	{
 		//If nothing has changed, return
 		if ((Display.getDisplayMode().getWidth() == width) && 
 		   (Display.getDisplayMode().getHeight() == height)&&
@@ -204,5 +208,14 @@ public abstract class Engine {
 		catch (LWJGLException e)	{
 			System.out.println("Unable to setup mode " + width  + "x" + height + " fs=" + fullscreen);
 		}
+	}
+	public static int getWidth() {
+		return width;
+	}
+	public static int getHeight() {
+		return height;
+	}
+	public static String getBuildNumber() {
+		return BUILD_TYPE + " " + BUILD_NUMBER;
 	}
 }

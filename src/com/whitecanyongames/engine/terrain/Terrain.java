@@ -28,6 +28,7 @@ import com.whitecanyongames.engine.ShaderLoader;
  * @author Lane
  * @author Oskar Veerhoek
  */
+@Deprecated
 public class Terrain {
 	private static int shaderProgram;
 	private static int lookupTexture;

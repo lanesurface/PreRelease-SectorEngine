@@ -1,37 +1,17 @@
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_VERSION;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glColorMaterial;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetString;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLightModel;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.whitecanyongames.engine.Engine;
 import com.whitecanyongames.engine.Utilities;
+import com.whitecanyongames.engine.camera.Camera;
 import com.whitecanyongames.engine.object.OBJLoader;
 
 public class Game extends Engine {
 	private float rotate;
+	public static Camera camera;
 	
 	public Game(int width, int height, int FPS, String title, boolean VSync) {
 		super(width, height, FPS, title, VSync);
@@ -40,12 +20,12 @@ public class Game extends Engine {
 	public void initGL()	{
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
 		
-		Utilities.clearScreen();
-		glClearColor(0.65f, 0.0f, 1.0f, 1.0f);
+		camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
 		
 //		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Wireframe mode
 		
 		bDebugMode = true;
+		bDisableFullscreen = true;
 		bDynamicLighting = true;
 		
 		glEnable(GL_CULL_FACE);
@@ -64,28 +44,8 @@ public class Game extends Engine {
 	}
 	@Override
 	public void update(int delta)	{
-		while(Keyboard.next())	{
-			if (Keyboard.getEventKeyState())	{
-				if (Keyboard.isKeyDown(Keyboard.KEY_W))	{
-					System.out.println("Key W down!");
-				}
-				if (Keyboard.isKeyDown(Keyboard.KEY_A))	{
-					System.out.println("Key A down!");
-				}
-				if (Keyboard.isKeyDown(Keyboard.KEY_S))	{
-					System.out.println("Key S down!");
-				}
-				if (Keyboard.isKeyDown(Keyboard.KEY_D))	{
-					System.out.println("Key D down!");
-				}
-			}
-			else {
-				System.out.println("Handle them releases you lazy bum!");
-			}
-		}
-		if (Mouse.isButtonDown(0))	{
-			System.out.println("Mouse grabbed!");
-		}
+		super.update(delta);
+		camera.toll(delta);
 	}
 	@Override
 	public void renderGL()	{
@@ -94,17 +54,24 @@ public class Game extends Engine {
 //		Vector2f pos = new Vector2f();
 //		pos.x = input.getxPos();
 //		pos.y = input.getyPos();
-//		
-//		glBindTexture(GL_TEXTURE_2D, this.texture);
+		
+//		TextureLoader texture = new TextureLoader();
+//		try {
+//			texture.loadTexture("texture.png");
+//			glBindTexture(GL_TEXTURE_2D, texture.getTexture().getTextureID());
+//		}
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
 //		
 //		glBegin(GL_QUADS);
-//			glTexCoord2f(0, 0);
+//			glTexCoord2f(100, 100);
 //			glVertex2f(100, 100);
-//			glTexCoord2f(1, 0);
+//			glTexCoord2f(300, 100);
 //			glVertex2f(300, 100);
-//			glTexCoord2f(1, 1);
+//			glTexCoord2f(300, 300);
 //			glVertex2f(300, 300);
-//			glTexCoord2f(0, 1);
+//			glTexCoord2f(100, 300);
 //			glVertex2f(100, 300);
 //		glEnd();
 //		
@@ -152,49 +119,35 @@ public class Game extends Engine {
 //      	glVertex3f( 1.0f,-1.0f,-1.0f);          // Bottom Right Of The Quad (Right)
 //      glEnd();
 		
-//		TextureLoader texture = new TextureLoader();
-//		try {
-//			texture.loadTexture("texture.png");
-//			glBindTexture(GL_TEXTURE_2D, texture.getTexture().getTextureID());
-//		}
-//		catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
 		//Render object files
 		Utilities.clearScreen();
-		glClearColor(0.65f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.025f, 0.28f, 0.36f, 1.0f);
 		
 		glLoadIdentity();
 		glLight(GL_LIGHT0, GL_POSITION, Utilities.asFloatBuffer(new float[] {0.0f, 0.0f, 0.0f, 1f}));
 		
-//		if (flatten) glScalef(1, 0, 1);
-//		
-//		glCallList(heightmapDisplayList);
-		
 		glLoadIdentity();
-		glTranslatef(-3.0f, 0.f, -10f);
+		
+		Vector3f position = camera.getPosition();
+		glTranslatef(position.x, 0, position.z);
+		
+		Vector3f rotation = camera.getRotation();
+		glRotatef(rotation.y, 0, 1, 0);
+		glRotatef(rotation.x, 1, 0, 0);
+		
+		glTranslatef(-3.0f, 0.0f, -10.0f);
 		glColor3f(0.47f, 0.89f, 0.23f);
 		OBJLoader.drawModel(new File("cube.obj"));
 		
-		glLoadIdentity();
-		glTranslatef(3.0f, 0.0f, -10.f);
+		glTranslatef(3.0f, 0.0f, 0.0f);
 		glRotatef(rotate, 1.0f, 1.0f, 0.0f);
 		glColor3f(0.4f, 0.27f, 0.17f);
 		OBJLoader.drawModel(new File("icosphere.obj"));
 		
 		rotate += 0.4f;
 	}
-	@Override
-	public void postGL()	{
-		
-	}
-	@Override
-	public void postGLFatal()	{
-		
-	}
 	public static void main(String[] args) {
-		Game game = new Game(800, 600, 120, "Sector Engine : Nightly Build 0.00.03", true);
+		Game game = new Game(800, 600, 120, "Sector Engine: " + Engine.getBuildNumber(), true);
 		game.start();
 	}
 }

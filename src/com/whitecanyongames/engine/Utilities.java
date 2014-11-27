@@ -48,6 +48,8 @@ public class Utilities {
 		glLoadIdentity();
 	}
 	/**
+	 * Return a float buffer generated from the array of float values
+	 * 
 	 * @param values The float array that you want converted to a FloatBuffer 
 	 * @return The generated FloatBuffer
 	 */
@@ -59,6 +61,7 @@ public class Utilities {
 		return buffer;
 	}
 	/**
+	 * Return a float buffer with the specified amount of memory reserved
 	 * 
 	 * @param size The size of the FloatBuffer
 	 * @return The FloatBuffer with the specified amount of data (size) reserved
