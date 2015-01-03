@@ -5,10 +5,10 @@ Hang in there while I finish off version 1.0.0
 
 What to expect:
 ---------------
-Level Editor
-Improved camera
-Super awesome demo
-BIS (Built in shaders) including toon and landscape shaders
+Level Editor, 
+Improved camera, 
+Super awesome demo, 
+BIS (Built in shaders) including toon and landscape shaders, 
 And more to come
 
 This repo will be deleted whenever Sector Engine 1.0.0 is released, as of now, it stands as a preview
