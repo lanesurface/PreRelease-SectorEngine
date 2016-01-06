@@ -3,7 +3,7 @@ PreRelease-SectorEngine
 This version is currently out dated and should not be downloaded, the next version will be a release and can be found at https://github.com/siliconincorporated/SectorEngine
 Hang in there while I finish off version 1.0.0
 
-###EDIT: Sector Engine is no longer in development. This repo stands in memory of a sad attempt at a game engine.
+####EDIT: Sector Engine is no longer in development. This repo stands in memory of a sad attempt at a game engine.
 
 What to expect:
 ---------------
